@@ -1,0 +1,77 @@
+import pygame
+import numpy as np
+
+
+pygame.init()
+
+win = pygame.display.set_mode((1000,600))
+pygame.display.set_caption('hanoi')
+
+
+def hanoi(n , source, destination, temp): 
+    global a
+    if n==0: 
+        print("1. from here",source,"to here",destination)
+        a.append([1, source, destination])
+        return a
+    hanoi(n-1, source, temp, destination) 
+    print (n,". from here",source,"to here",destination)
+    a.append([n, source, destination])
+    hanoi(n-1, temp, destination, source)
+
+
+def draw(p): 
+    global color
+    pygame.draw.rect(win, (255,255,255), (0, 0, 1000, 600))
+    for i in range(3):
+        pygame.draw.rect(win, (0,0,0), (i*300+200, 100, 20, 500))
+    for i in range(len(p)):
+        a = -1
+        for j in range(i+1):
+            if p[i] == p[j]:
+                a+=1
+        pygame.draw.rect(win, color[i], (p[i]*300+(150+i*25)-90, 570-a*30, 300-i*50, 30))
+    pygame.display.update()
+
+
+def move(i): 
+    global a
+    global poz
+    if a[i][2] == 'A':
+        poz[len(poz)-a[i][0]] = 0
+    if a[i][2] == 'B':
+        poz[len(poz)-a[i][0]] = 1
+    if a[i][2] == 'C':
+        poz[len(poz)-a[i][0]] = 2
+
+
+hossz = 4 
+a = []   
+poz = []   
+for i in range(hossz):
+    poz.append(0)
+
+color = []
+for i in range(hossz):
+    color.append(list(np.random.choice(range(256), size=3)))
+
+hanoi(hossz,'A','C','B')
+
+print(a)
+
+
+i = 0
+run = True
+while run:
+    pygame.time.delay(500)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+    draw(poz)
+    move(i)
+    i+=1
+    if i > len(a)-1:
+        run = False
+
+pygame.time.delay(4000)    
+pygame.quit()
